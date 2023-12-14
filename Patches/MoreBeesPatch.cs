@@ -23,29 +23,65 @@ namespace MoreBees.Patches
     class MoreBeesPatch
     {
 
+
         [HarmonyPatch(typeof(RoundManager), "SpawnEnemiesOutside")]
         static void Postfix(ref RoundManager __instance)
         {
             // Access the private field "SpawnedEnemies" using reflection
-            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies", BindingFlags.NonPublic | BindingFlags.Instance);
-            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance);
+            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies", BindingFlags.Public | BindingFlags.Instance);
+
+            // Check if the field is found and not null
+            if (spawnedEnemiesField == null)
+            {
+                Debug.LogError("SpawnedEnemies field not found in RoundManager.");
+                return;
+            }
+
+            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance.SpawnedEnemies);
+
+            // Check if the list is not null
+            if (spawnedEnemiesList == null)
+            {
+                Debug.LogError("SpawnedEnemies list is null in RoundManager.");
+                return;
+            }
 
             // Modify the enemyType for each spawned enemy
             foreach (var spawnedEnemy in spawnedEnemiesList)
             {
                 // Access the private field "enemyType" using reflection
                 var enemyTypeField = typeof(EnemyAI).GetField("enemyType", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                // Check if the field is found and not null
+                if (enemyTypeField == null)
+                {
+                    
+                    Debug.LogError("enemyType field not found in EnemyAI.");
+                    continue; // Skip to the next spawned enemy
+                }
+
                 var enemyType = (EnemyType)enemyTypeField.GetValue(spawnedEnemy);
+                
+                // Check if the enemyType is not null
+                if (enemyType == null)
+                {
+                    Debug.LogError("enemyType is null in EnemyAI.");
+                    continue; // Skip to the next spawned enemy
+                }
 
                 // Modify the enemyType as needed
                 // For example, setting a new value to the "powerLevel" property
                 enemyType.PowerLevel = 100;
                 enemyType.enemyName = "RedLocustBees";
+                enemyType.isOutsideEnemy = true;
+                enemyType.MaxCount = 200;
 
                 // Update the "enemyType" field with the modified value
                 enemyTypeField.SetValue(spawnedEnemy, enemyType);
+                Debug.Log("NEW NEW NEW NEW NEW NEW NEW ENEMY: " + spawnedEnemy.enemyType);
             }
         }
+
 
 
         // Working Mods
