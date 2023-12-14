@@ -24,75 +24,57 @@ namespace MoreBees.Patches
     {
 
 
-        [HarmonyPatch(typeof(RoundManager), "SpawnEnemiesOutside")]
-        static void Postfix(ref RoundManager __instance)
+        [HarmonyPatch(typeof(RoundManager), "SpawnRandomOutsideEnemy")]
+        static void Prefix(RoundManager __instance, GameObject[] spawnPoints, float timeUpToCurrentHour)
         {
+            Debug.LogWarning("--------------------INSIDE THE BEES AND SHIT");
+            Debug.LogAssertion("--------------------INSIDE THE BEES AND SHIT");
+            Debug.LogError("--------------------INSIDE THE BEES AND SHIT");
             
-            Debug.LogWarning("-------------------------INSIDE BEES--------------------------");
-            // Access the private field "SpawnedEnemies" using reflection
-            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies");
+            // Access private members using reflection
+            var currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
 
-            // Check if the field is found and not null
-            if (spawnedEnemiesField == null)
+            if (currentLevelField != null)
             {
-                Debug.LogError("SpawnedEnemies field not found in RoundManager.");
-                return;
-            }
-            // Ensure that the field type is List<EnemyAI>
-            if (spawnedEnemiesField.FieldType != typeof(List<EnemyAI>))
-            {
-                Debug.LogError("SpawnedEnemies field is not of type List<EnemyAI>.");
-                return;
-            }
+                var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
 
-
-            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance);
-
-            // Check if the list is not null
-            if (spawnedEnemiesList == null)
-            {
-                Debug.LogError("SpawnedEnemies list is null in RoundManager.");
-                return;
-            }
-
-            // Modify the enemyType for each spawned enemy. List of AI Objects
-            foreach (var spawnedEnemy in spawnedEnemiesList)
-            {
-                // Access the private field "enemyType" using reflection
-                var enemyTypeField = typeof(EnemyAI).GetField("enemyType");
-
-                // Check if the field is found and not null
-                if (enemyTypeField == null)
+                // Check if currentLevel is not null
+                if (currentLevel != null)
                 {
-                    
-                    Debug.LogError("enemyType field not found in EnemyAI.");
-                    continue; // Skip to the next spawned enemy
+                    // Access the OutsideEnemies list
+                    var outsideEnemies = currentLevel.OutsideEnemies;
+
+                    // Log or perform actions with the OutsideEnemies list
+                    Debug.LogAssertion($"--------------------Number of OutsideEnemies: {outsideEnemies.Count}");
+
+                    // Iterate through the OutsideEnemies list
+                    foreach (var outsideEnemy in outsideEnemies)
+                    {
+                        // Access properties or fields of each OutsideEnemy object
+                        Debug.LogAssertion($"--------------------Enemy Type: {outsideEnemy.enemyType}");
+                    }
                 }
-
-                var enemyType = (EnemyType)enemyTypeField.GetValue(spawnedEnemy);
-                
-                // Check if the enemyType is not null
-                if (enemyType == null)
-                {
-                    Debug.LogError("enemyType is null in EnemyAI.");
-                    continue; // Skip to the next spawned enemy
-                }
-
-                Debug.LogWarning("OLD OLD OLD OLD OLD OLD  ENEMY: " + spawnedEnemy);
-                // Modify the enemyType as needed
-                // For example, setting a new value to the "powerLevel" property
-                enemyType.PowerLevel = 100;
-                enemyType.enemyName = "RedLocustBees";
-                // enemyType.isOutsideEnemy = true;
-                enemyType.MaxCount = 200;
-
-                // Update the "enemyType" field with the modified value
-                // enemyTypeField.SetValue(spawnedEnemy, enemyType);
-                enemyTypeField.SetValue(spawnedEnemy, enemyType);
-
-                Debug.LogWarning("NEW NEW NEW NEW NEW NEW NEW ENEMY: " + spawnedEnemy);
             }
         }
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
