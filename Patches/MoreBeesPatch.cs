@@ -27,8 +27,10 @@ namespace MoreBees.Patches
         [HarmonyPatch(typeof(RoundManager), "SpawnEnemiesOutside")]
         static void Postfix(ref RoundManager __instance)
         {
+            
+            Debug.LogWarning("-------------------------INSIDE BEES--------------------------");
             // Access the private field "SpawnedEnemies" using reflection
-            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies", BindingFlags.Public | BindingFlags.Instance);
+            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies");
 
             // Check if the field is found and not null
             if (spawnedEnemiesField == null)
@@ -36,8 +38,15 @@ namespace MoreBees.Patches
                 Debug.LogError("SpawnedEnemies field not found in RoundManager.");
                 return;
             }
+            // Ensure that the field type is List<EnemyAI>
+            if (spawnedEnemiesField.FieldType != typeof(List<EnemyAI>))
+            {
+                Debug.LogError("SpawnedEnemies field is not of type List<EnemyAI>.");
+                return;
+            }
 
-            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance.SpawnedEnemies);
+
+            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance);
 
             // Check if the list is not null
             if (spawnedEnemiesList == null)
@@ -46,11 +55,11 @@ namespace MoreBees.Patches
                 return;
             }
 
-            // Modify the enemyType for each spawned enemy
+            // Modify the enemyType for each spawned enemy. List of AI Objects
             foreach (var spawnedEnemy in spawnedEnemiesList)
             {
                 // Access the private field "enemyType" using reflection
-                var enemyTypeField = typeof(EnemyAI).GetField("enemyType", BindingFlags.NonPublic | BindingFlags.Instance);
+                var enemyTypeField = typeof(EnemyAI).GetField("enemyType");
 
                 // Check if the field is found and not null
                 if (enemyTypeField == null)
@@ -69,16 +78,19 @@ namespace MoreBees.Patches
                     continue; // Skip to the next spawned enemy
                 }
 
+                Debug.LogWarning("OLD OLD OLD OLD OLD OLD  ENEMY: " + spawnedEnemy);
                 // Modify the enemyType as needed
                 // For example, setting a new value to the "powerLevel" property
                 enemyType.PowerLevel = 100;
                 enemyType.enemyName = "RedLocustBees";
-                enemyType.isOutsideEnemy = true;
+                // enemyType.isOutsideEnemy = true;
                 enemyType.MaxCount = 200;
 
                 // Update the "enemyType" field with the modified value
+                // enemyTypeField.SetValue(spawnedEnemy, enemyType);
                 enemyTypeField.SetValue(spawnedEnemy, enemyType);
-                Debug.Log("NEW NEW NEW NEW NEW NEW NEW ENEMY: " + spawnedEnemy.enemyType);
+
+                Debug.LogWarning("NEW NEW NEW NEW NEW NEW NEW ENEMY: " + spawnedEnemy);
             }
         }
 
