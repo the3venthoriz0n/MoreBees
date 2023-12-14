@@ -22,75 +22,33 @@ namespace MoreBees.Patches
     [HarmonyPatch]
     class MoreBeesPatch
     {
-         
-        public enum EnemyType
+
+        [HarmonyPatch(typeof(RoundManager), "SpawnEnemiesOutside")]
+        static void Postfix(ref RoundManager __instance)
         {
-            RedLocustBees, // Add more enemy types as needed
-        }
+            // Access the private field "SpawnedEnemies" using reflection
+            var spawnedEnemiesField = typeof(RoundManager).GetField("SpawnedEnemies", BindingFlags.NonPublic | BindingFlags.Instance);
+            var spawnedEnemiesList = (List<EnemyAI>)spawnedEnemiesField.GetValue(__instance);
 
-
-        // Transpiler method
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            List<CodeInstruction> instructionList = new List<CodeInstruction>(instructions);
-
-            for (int i = 0; i < instructionList.Count; i++)
+            // Modify the enemyType for each spawned enemy
+            foreach (var spawnedEnemy in spawnedEnemiesList)
             {
-                if (instructionList[i].opcode == OpCodes.Stfld && instructionList[i].operand.ToString().Contains("enemyType"))
-                {
-                    // Replace the instruction that sets the value of enemyType
-                    instructionList[i].operand = AccessTools.Field(typeof(SpawnableEnemyWithRarity), "enemyType");
-                }
-            }
+                // Access the private field "enemyType" using reflection
+                var enemyTypeField = typeof(EnemyAI).GetField("enemyType", BindingFlags.NonPublic | BindingFlags.Instance);
+                var enemyType = (EnemyType)enemyTypeField.GetValue(spawnedEnemy);
 
-            return instructionList.AsEnumerable();
+                // Modify the enemyType as needed
+                // For example, setting a new value to the "powerLevel" property
+                enemyType.PowerLevel = 100;
+                enemyType.enemyName = "RedLocustBees";
+
+                // Update the "enemyType" field with the modified value
+                enemyTypeField.SetValue(spawnedEnemy, enemyType);
+            }
         }
 
 
-        //[HarmonyPatch(typeof(SpawnableEnemyWithRarity), nameof(SpawnableEnemyWithRarity.enemyType))]
-
-        //static bool Prefix(ref EnemyType value)
-        //{
-        //    // Perform your validation here
-        //    if (value != EnemyType.RedLocustBees)
-        //    {
-        //        Debug.LogError("Invalid enemy type detected!");
-        //        value = EnemyType.RedLocustBees; // Set a default value or handle the error as needed
-        //    }
-
-        //    // Allow the original method to proceed
-        //    return true;
-        //}
-
-
-        // Not working as far as I can tell
-        //[HarmonyPatch(typeof(SpawnableEnemyWithRarity))]
-        //[HarmonyPatch(MethodType.Constructor)]
-        //static void Postfix(ref SpawnableEnemyWithRarity __instance)
-        //{
-        //    // Set enemyType to RedLocustBees
-        //    __instance.enemyType.enemyName = "RedLocustBees";
-
-        //}
-
-
-        //[HarmonyPatch(typeof(SelectableLevel))]
-        //[HarmonyPatch(MethodType.Constructor)]
-        ////[HarmonyPatch(new Type[] { typeof(int) })] // Add constructor parameters if needed
-        //static void Postfix(SelectableLevel __instance)
-        //{
-        //    // Your code here to modify the instance of SelectableLevel
-        //    __instance.maxEnemyPowerCount = 100;
-        //    __instance.maxOutsideEnemyPowerCount = 100;
-        //    __instance.maxDaytimeEnemyPowerCount = 100;
-        //    __instance.spawnProbabilityRange = 10f;
-        //    __instance.daytimeEnemiesProbabilityRange = 100f;
-
-
-        //    __instance.minTotalScrapValue = 9000;
-        //}
-
-
+        // Working Mods
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
         [HarmonyPostfix]
         static void moreTentacles(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
