@@ -18,43 +18,25 @@ using GameNetcodeStuff;
 
 namespace MoreBees.Patches
 {
-
     [HarmonyPatch]
     class MoreBeesPatch
     {
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
-        static void Prefix(RoundManager __instance)
+        [HarmonyPrefix]
+        static void chooseDaytimeEnemies(RoundManager __instance)
         {
-
-            Debug.LogWarning("--------------------INSIDE CHOOSE BEES--------------------");
-
-            // Access private members using reflection
             var currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
 
             if (currentLevelField != null)
             {
                 var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
-                var spawnProbabilitiesField = AccessTools.Field(typeof(RoundManager), "SpawnProbabilities");
 
-                if (spawnProbabilitiesField != null)
-                {
-                    var spawnProbabilities = (List<int>)spawnProbabilitiesField.GetValue(__instance);
-                    
-                    foreach(var spawnProb in spawnProbabilities)
-                    {
-                        // Debug.LogWarning($"--------------------Spawn Prob: {spawnProb}");
-                    }
-
-                }
-                    // Check if currentLevel is not null
                     if (currentLevel != null)
                     {
                         currentLevel.maxDaytimeEnemyPowerCount = 100;
                         // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
 
-                        // Access the DaytimeEnemies list
                         var daytimeEnemies = currentLevel.DaytimeEnemies;
-
                         Debug.LogWarning($"--------------------Number of DaytimeEnemies: {daytimeEnemies.Count}");
 
                         // Iterate through the daytimeEnemies list
@@ -64,7 +46,6 @@ namespace MoreBees.Patches
                             // Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
                             // Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
 
-                            
                             // ONLY SPAWN BEES, REJECT OTHER DAYTIME SPAWNS
                             if (daytimeEnemy.enemyType.name == "RedLocustBees")
                             {
@@ -91,28 +72,21 @@ namespace MoreBees.Patches
             }
         }
 
-
-
-
-
-
-
+        // Spawn more daytime enemies
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
-        static void Postfix(RoundManager __instance)
+        [HarmonyPostfix]
+        static void moreDaytimeEnemies(RoundManager __instance)
         {
-            Debug.LogWarning("--------------------INSIDE SPAWN MORE BEES--------------------");
-
-            float num = 100; // Some random BS number
+            float num = 100; // timeScript.lengthOfHours * (float)currentHour;
             GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("OutsideAINode");
 
             // Iterate over each EnemyType in the list
             foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
             {
                 // Access MaxCount directly on the current EnemyType instance
-                int numberOfBees = enemy.enemyType.MaxCount = 100;
-                Debug.LogWarning($"BEES SET TO: {numberOfBees}");
+                int numberOfBees = enemy.enemyType.MaxCount = 1000;
+                // Debug.LogWarning($"BEES SET TO: {numberOfBees}");
 
-                // Use reflection to access the private method
                 System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
 
                 if (spawnRandomDaytimeEnemyMethod != null)
@@ -123,7 +97,7 @@ namespace MoreBees.Patches
                         GameObject gameObject = spawnRandomDaytimeEnemyMethod.Invoke(__instance, new object[] { spawnPoints, num }) as GameObject;
                         if (gameObject != null)
                         {
-                            Debug.LogWarning("--------------------BUZZ--------------------");
+                            Debug.LogWarning("BUZZ");
                             __instance.SpawnedEnemies.Add(gameObject.GetComponent<EnemyAI>());
                             gameObject.GetComponent<EnemyAI>().enemyType.numberSpawned++;
                             continue;
@@ -135,17 +109,6 @@ namespace MoreBees.Patches
         }
 
 
-
-
-
-
-
-
-
-
-
-
-        // Working Mods
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
         [HarmonyPostfix]
         static void moreTentacles(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
