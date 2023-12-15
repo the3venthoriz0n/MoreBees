@@ -22,14 +22,11 @@ namespace MoreBees.Patches
     [HarmonyPatch]
     class MoreBeesPatch
     {
-        // TODO Spawn more daytime enemies
-        
-
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         static void Prefix(RoundManager __instance)
         {
 
-            Debug.LogWarning("--------------------INSIDE SPAWN DAYTIME ENEMIES OUTSIDE!!!!!!!!!!!!!!!!!!!");
+            Debug.LogWarning("--------------------INSIDE CHOOSE BEES--------------------");
 
             // Access private members using reflection
             var currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
@@ -39,25 +36,21 @@ namespace MoreBees.Patches
                 var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
                 var spawnProbabilitiesField = AccessTools.Field(typeof(RoundManager), "SpawnProbabilities");
 
-
                 if (spawnProbabilitiesField != null)
                 {
                     var spawnProbabilities = (List<int>)spawnProbabilitiesField.GetValue(__instance);
                     
                     foreach(var spawnProb in spawnProbabilities)
                     {
-                        Debug.LogWarning($"--------------------Spawn Prob: {spawnProb}");
+                        // Debug.LogWarning($"--------------------Spawn Prob: {spawnProb}");
                     }
 
                 }
-
-
                     // Check if currentLevel is not null
                     if (currentLevel != null)
                     {
                         currentLevel.maxDaytimeEnemyPowerCount = 100;
                         // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
-
 
                         // Access the DaytimeEnemies list
                         var daytimeEnemies = currentLevel.DaytimeEnemies;
@@ -68,25 +61,24 @@ namespace MoreBees.Patches
                         foreach (var daytimeEnemy in daytimeEnemies)
                         {
                             // Access properties or fields of each OutsideEnemy object
-                            Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
-                            Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
+                            // Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
+                            // Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
 
                             
                             // ONLY SPAWN BEES, REJECT OTHER DAYTIME SPAWNS
                             if (daytimeEnemy.enemyType.name == "RedLocustBees")
                             {
                                 daytimeEnemy.rarity = 100;
-                                Debug.LogWarning($"RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
+                                // Debug.LogWarning($"RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
+
                             }
                             else
                             {
                                 daytimeEnemy.rarity = 0;
-                                Debug.LogWarning($"NOT A BEE, RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
+                                // Debug.LogWarning($"NOT A BEE, RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
                         }
 
                         }
-
-             
                 }
                 else
                 {
@@ -97,17 +89,54 @@ namespace MoreBees.Patches
             {
                 Debug.LogError("CurrentLevelField is NULL");
             }
-
-
         }
 
 
 
+     
 
 
 
+        // TODO Spawn more daytime enemies
+        [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
+        static void Postfix(RoundManager __instance)
+        {
+            Debug.LogWarning("--------------------INSIDE SPAWN MORE BEES--------------------");
+      
+            float num = 100; // Some random BS number
+            GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("OutsideAINode");
 
 
+            var maxCountField = AccessTools.Field(typeof(EnemyType), "MaxCount");
+            // var numberSpawnedField = AccessTools.Field(typeof(EnemyType), "numberSpawned");
+
+            if (maxCountField != null)
+            {
+                var enemy = (EnemyType)maxCountField.GetValue(__instance);
+                int numberOfBees = enemy.MaxCount = 100;
+                Debug.LogWarning($"BEES SET TO: {numberOfBees}");
+
+                // Use reflection to access the private method
+                System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
+
+                if (spawnRandomDaytimeEnemyMethod != null)
+                {
+                    // Execute additional code after the 'for' loop
+                    for (int i = 0; i < numberOfBees; i++)
+                    {
+                        GameObject gameObject = spawnRandomDaytimeEnemyMethod.Invoke(__instance, new object[] { spawnPoints, num }) as GameObject;
+                        if (gameObject != null)
+                        {
+                            Debug.LogWarning("--------------------BUZZ--------------------");
+                            __instance.SpawnedEnemies.Add(gameObject.GetComponent<EnemyAI>());
+                            gameObject.GetComponent<EnemyAI>().enemyType.numberSpawned++;
+                            continue;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
 
 
