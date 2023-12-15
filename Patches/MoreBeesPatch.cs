@@ -93,27 +93,23 @@ namespace MoreBees.Patches
 
 
 
-     
 
 
 
-        // TODO Spawn more daytime enemies
+
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         static void Postfix(RoundManager __instance)
         {
             Debug.LogWarning("--------------------INSIDE SPAWN MORE BEES--------------------");
-      
+
             float num = 100; // Some random BS number
             GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("OutsideAINode");
 
-
-            var maxCountField = AccessTools.Field(typeof(EnemyType), "MaxCount");
-            // var numberSpawnedField = AccessTools.Field(typeof(EnemyType), "numberSpawned");
-
-            if (maxCountField != null)
+            // Iterate over each EnemyType in the list
+            foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
             {
-                var enemy = (EnemyType)maxCountField.GetValue(__instance);
-                int numberOfBees = enemy.MaxCount = 100;
+                // Access MaxCount directly on the current EnemyType instance
+                int numberOfBees = enemy.enemyType.MaxCount = 100;
                 Debug.LogWarning($"BEES SET TO: {numberOfBees}");
 
                 // Use reflection to access the private method
@@ -137,6 +133,7 @@ namespace MoreBees.Patches
                 }
             }
         }
+
 
 
 
