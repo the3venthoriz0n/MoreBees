@@ -22,43 +22,83 @@ namespace MoreBees.Patches
     [HarmonyPatch]
     class MoreBeesPatch
     {
+        // TODO Spawn more daytime enemies
+        // TODO Choose only BEES, Increase probability / lower rarity
 
-
-        [HarmonyPatch(typeof(RoundManager), "SpawnRandomOutsideEnemy")]
-        static void Prefix(RoundManager __instance, GameObject[] spawnPoints, float timeUpToCurrentHour)
+        [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
+        static void Prefix(RoundManager __instance)
         {
-            Debug.LogWarning("--------------------INSIDE THE BEES AND SHIT");
-            Debug.LogAssertion("--------------------INSIDE THE BEES AND SHIT");
-            Debug.LogError("--------------------INSIDE THE BEES AND SHIT");
-            
+
+            Debug.LogWarning("--------------------INSIDE SPAWN DAYTIME ENEMIES OUTSIDE!!!!!!!!!!!!!!!!!!!");
+
             // Access private members using reflection
             var currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
 
             if (currentLevelField != null)
             {
                 var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
+                var spawnProbabilitiesField = AccessTools.Field(typeof(RoundManager), "SpawnProbabilities");
 
-                // Check if currentLevel is not null
-                if (currentLevel != null)
+
+                if (spawnProbabilitiesField != null)
                 {
-                    // Access the OutsideEnemies list
-                    var outsideEnemies = currentLevel.OutsideEnemies;
-
-                    // Log or perform actions with the OutsideEnemies list
-                    Debug.LogAssertion($"--------------------Number of OutsideEnemies: {outsideEnemies.Count}");
-
-                    // Iterate through the OutsideEnemies list
-                    foreach (var outsideEnemy in outsideEnemies)
+                    var spawnProbabilities = (List<int>)spawnProbabilitiesField.GetValue(__instance);
+                    
+                    foreach(var spawnProb in spawnProbabilities)
                     {
-                        // Access properties or fields of each OutsideEnemy object
-                        Debug.LogAssertion($"--------------------Enemy Type: {outsideEnemy.enemyType}");
+                        Debug.LogWarning($"--------------------Spawn Prob: {spawnProb}");
                     }
+
+                }
+
+
+                    // Check if currentLevel is not null
+                    if (currentLevel != null)
+                    {
+                        currentLevel.maxDaytimeEnemyPowerCount = 100;
+                        // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
+
+
+                        // Access the DaytimeEnemies list
+                        var daytimeEnemies = currentLevel.DaytimeEnemies;
+
+                        Debug.LogWarning($"--------------------Number of DaytimeEnemies: {daytimeEnemies.Count}");
+
+                        // Iterate through the daytimeEnemies list
+                        foreach (var daytimeEnemy in daytimeEnemies)
+                        {
+                            // Access properties or fields of each OutsideEnemy object
+                            Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
+                            Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
+
+
+                            if (daytimeEnemy.enemyType.name == "RedLocustBees")
+                            {
+                                daytimeEnemy.rarity = 0;
+                                Debug.LogWarning("RARITY SET RARITY SET");
+                            }
+                            else
+                            {
+                                daytimeEnemy.rarity = 100;
+                                Debug.LogWarning("NOT A BEE, RARITY SET RARITY SET");
+                            }
+
+                        }
+
+             
+                }
+                else
+                {
+                    Debug.LogError("currentLevel is NULL");
                 }
             }
+            else
+            {
+                Debug.LogError("CurrentLevelField is NULL");
+            }
+
+
         }
-
-
-        
 
 
 
