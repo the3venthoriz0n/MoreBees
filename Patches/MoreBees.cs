@@ -19,13 +19,21 @@ using GameNetcodeStuff;
 namespace MoreBees.Patches
 {
     [HarmonyPatch]
-    class MoreBeesPatch
+    class moreBeesPatch
     {
+        private static FieldInfo currentLevelField;
+
+        static moreBeesPatch()
+        {
+            // Initialize currentLevelField in the static constructor
+            currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
+
+        }
+
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         [HarmonyPrefix]
         static void chooseDaytimeEnemies(RoundManager __instance)
         {
-            var currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
 
             if (currentLevelField != null)
             {
@@ -33,7 +41,7 @@ namespace MoreBees.Patches
 
                     if (currentLevel != null)
                     {
-                        currentLevel.maxDaytimeEnemyPowerCount = 100;
+                        currentLevel.maxDaytimeEnemyPowerCount = 200; // this controls the number of enemies (bees)
                         // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
 
                         var daytimeEnemies = currentLevel.DaytimeEnemies;
@@ -80,73 +88,37 @@ namespace MoreBees.Patches
             float num = 100; // timeScript.lengthOfHours * (float)currentHour;
             GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("OutsideAINode");
 
-            // Iterate over each EnemyType in the list
-            foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
+            if (currentLevelField != null)
             {
-                // Access MaxCount directly on the current EnemyType instance
-                int numberOfBees = enemy.enemyType.MaxCount = 1000;
-                // Debug.LogWarning($"BEES SET TO: {numberOfBees}");
+                var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
 
-                System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
-
-                if (spawnRandomDaytimeEnemyMethod != null)
+                // Iterate over each EnemyType in the list
+                foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
                 {
-                    // Execute additional code after the 'for' loop
-                    for (int i = 0; i < numberOfBees; i++)
+                    // Access MaxCount directly on the current EnemyType instance
+                    int numberOfBees = enemy.enemyType.MaxCount = currentLevel.maxDaytimeEnemyPowerCount; // controlled above ^^
+                    // Debug.LogWarning($"BEES SET TO: {numberOfBees}");
+
+                    System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
+
+                    if (spawnRandomDaytimeEnemyMethod != null)
                     {
-                        GameObject gameObject = spawnRandomDaytimeEnemyMethod.Invoke(__instance, new object[] { spawnPoints, num }) as GameObject;
-                        if (gameObject != null)
+                        // Execute additional code after the 'for' loop
+                        for (int i = 0; i < numberOfBees; i++)
                         {
-                            Debug.LogWarning("BUZZ");
-                            __instance.SpawnedEnemies.Add(gameObject.GetComponent<EnemyAI>());
-                            gameObject.GetComponent<EnemyAI>().enemyType.numberSpawned++;
-                            continue;
+                            GameObject gameObject = spawnRandomDaytimeEnemyMethod.Invoke(__instance, new object[] { spawnPoints, num }) as GameObject;
+                            if (gameObject != null)
+                            {
+                                Debug.LogWarning("BUZZ");
+                                __instance.SpawnedEnemies.Add(gameObject.GetComponent<EnemyAI>());
+                                gameObject.GetComponent<EnemyAI>().enemyType.numberSpawned++;
+                                continue;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
         }
-
-
-        [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
-        [HarmonyPostfix]
-        static void moreTentacles(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
-        {
-           
-            ___currentMood.desiresSilence = true;
-            ___currentMood.sensitivity = 10f;
-            ___currentMood.irritability = 10f;
-            ___currentMood.judgementSpeed = 10f;
-            ___currentMood.timeToWaitBeforeGrabbingItem = 1f;
-            ___currentMood.startingPatience = 0f;
-
-            ___noiseBehindWallVolume = 10f;
-
-        }
-
-
-        [HarmonyPatch(typeof(GrabbableObject), "Update")]
-        [HarmonyPostfix]
-        static void moreBatts(ref Battery ___insertedBattery)
-        {
-            ___insertedBattery.charge = 1f;
-            ___insertedBattery.empty = false;
-
-        }
-
-
-        [HarmonyPatch(typeof(PlayerControllerB), "Update")]
-        [HarmonyPostfix]
-        static void moreSprint(ref float ___sprintMeter)
-        {
-            ___sprintMeter = 1f;
-
-        }
-
-
-
     }
-
-
 }

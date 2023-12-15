@@ -59,8 +59,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patches\MoreBeesPatch.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Patches\moreBatts.cs" />
+    <Compile Include="Patches\moreBees.cs" />
+    <Compile Include="Patches\moreSprint.cs" />
+    <Compile Include="Patches\moreTentacles.cs" />
+    <Compile Include="MoreBeesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

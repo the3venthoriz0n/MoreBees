@@ -8,7 +8,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using MoreBees.Patches;
 
-namespace MoreBees
+namespace MoreBees.Patches
 {
     [BepInPlugin(modGUID, modName, modVersion)]
     public class MoreBeesBase : BaseUnityPlugin
