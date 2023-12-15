@@ -18,9 +18,7 @@ namespace MoreBees.Patches
         private const string modVersion = "1.0.0.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
-
         public static ManualLogSource Log = new ManualLogSource(modName);
-
         private static MoreBeesBase Instance;
 
         void Awake()

@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace MoreBees.Patches
 {
-    internal class moreBattsPatch
+    class moreBatts
     {
 
         [HarmonyPatch(typeof(GrabbableObject), "Update")]
-        [HarmonyPostfix]
-        static void moreBatts(ref Battery ___insertedBattery)
+        static void PostFix(ref Battery ___insertedBattery)
         {
             ___insertedBattery.charge = 1f;
             ___insertedBattery.empty = false;

@@ -1,29 +1,15 @@
 ﻿using HarmonyLib;
-using JetBrains.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using BepInEx;
-using BepInEx.Logging;
-using Unity.Netcode;
-using System.ComponentModel;
-using System.Xml.Linq;
-using DunGen.Graph;
-using System.Reflection.Emit;
 using System.Reflection;
-using GameNetcodeStuff;
+using UnityEngine;
 
 namespace MoreBees.Patches
 {
     [HarmonyPatch]
-    class moreBeesPatch
+    class moreBees
     {
         private static FieldInfo currentLevelField;
 
-        static moreBeesPatch()
+        static moreBees()
         {
             // Initialize currentLevelField in the static constructor
             currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
@@ -39,35 +25,35 @@ namespace MoreBees.Patches
             {
                 var currentLevel = (SelectableLevel)currentLevelField.GetValue(__instance);
 
-                    if (currentLevel != null)
+                if (currentLevel != null)
+                {
+                    currentLevel.maxDaytimeEnemyPowerCount = 200; // this controls the number of enemies (bees)
+                                                                  // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
+
+                    var daytimeEnemies = currentLevel.DaytimeEnemies;
+                    Debug.LogWarning($"--------------------Number of DaytimeEnemies: {daytimeEnemies.Count}");
+
+                    // Iterate through the daytimeEnemies list
+                    foreach (var daytimeEnemy in daytimeEnemies)
                     {
-                        currentLevel.maxDaytimeEnemyPowerCount = 200; // this controls the number of enemies (bees)
-                        // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
+                        // Access properties or fields of each OutsideEnemy object
+                        // Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
+                        // Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
 
-                        var daytimeEnemies = currentLevel.DaytimeEnemies;
-                        Debug.LogWarning($"--------------------Number of DaytimeEnemies: {daytimeEnemies.Count}");
-
-                        // Iterate through the daytimeEnemies list
-                        foreach (var daytimeEnemy in daytimeEnemies)
+                        // ONLY SPAWN BEES, REJECT OTHER DAYTIME SPAWNS
+                        if (daytimeEnemy.enemyType.name == "RedLocustBees")
                         {
-                            // Access properties or fields of each OutsideEnemy object
-                            // Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
-                            // Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
-
-                            // ONLY SPAWN BEES, REJECT OTHER DAYTIME SPAWNS
-                            if (daytimeEnemy.enemyType.name == "RedLocustBees")
-                            {
-                                daytimeEnemy.rarity = 100;
-                                // Debug.LogWarning($"RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
-
-                            }
-                            else
-                            {
-                                daytimeEnemy.rarity = 0;
-                                // Debug.LogWarning($"NOT A BEE, RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
-                        }
+                            daytimeEnemy.rarity = 100;
+                            // Debug.LogWarning($"RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
 
                         }
+                        else
+                        {
+                            daytimeEnemy.rarity = 0;
+                            // Debug.LogWarning($"NOT A BEE, RARITY SET RARITY SET TO: {daytimeEnemy.rarity}");
+                        }
+
+                    }
                 }
                 else
                 {

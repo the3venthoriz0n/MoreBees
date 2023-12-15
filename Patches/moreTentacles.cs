@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace MoreBees.Patches
 {
-    internal class moreTentaclesPatch
+    class moreTentacles
     {
 
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
-        [HarmonyPostfix]
-        static void moreTentacles(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
+        static void PostFix(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
         {
             ___currentMood.desiresSilence = true;
             ___currentMood.sensitivity = 10f;
