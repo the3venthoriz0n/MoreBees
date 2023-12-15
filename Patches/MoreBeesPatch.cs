@@ -23,7 +23,7 @@ namespace MoreBees.Patches
     class MoreBeesPatch
     {
         // TODO Spawn more daytime enemies
-        // TODO Choose only BEES, Increase probability / raise rarity
+        
 
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         static void Prefix(RoundManager __instance)
@@ -71,7 +71,8 @@ namespace MoreBees.Patches
                             Debug.LogWarning($"--------------------Enemy Type: {daytimeEnemy.enemyType.name}");
                             Debug.LogWarning($"--------------------Enemy Rarity: {daytimeEnemy.rarity}");
 
-
+                            
+                            // ONLY SPAWN BEES, REJECT OTHER DAYTIME SPAWNS
                             if (daytimeEnemy.enemyType.name == "RedLocustBees")
                             {
                                 daytimeEnemy.rarity = 100;
