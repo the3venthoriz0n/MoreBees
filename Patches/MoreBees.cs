@@ -27,7 +27,7 @@ namespace MoreBees.Patches
 
                 if (currentLevel != null)
                 {
-                    currentLevel.maxDaytimeEnemyPowerCount = 200; // this controls the number of enemies (bees)
+                    currentLevel.maxDaytimeEnemyPowerCount = 70; // this controls the number of enemies (bees)
                                                                   // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
 
                     var daytimeEnemies = currentLevel.DaytimeEnemies;
