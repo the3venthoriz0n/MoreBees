@@ -3,7 +3,8 @@ using HarmonyLib;
 
 namespace MoreBees.Patches
 {
-    class moreSprint
+    [HarmonyPatch]
+    class moreSprint : moreBees
     {
         [HarmonyPatch(typeof(PlayerControllerB), "Update")]
         static void PostFix(ref float ___sprintMeter)
