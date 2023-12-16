@@ -1,9 +1,10 @@
 # More Bees
-> This is a mod for Lethal Company. It adds more bees. You're welcome
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
+
+This is a mod for Lethal Company. It adds more bees. You're welcome
 
 
 ![](header.png)
