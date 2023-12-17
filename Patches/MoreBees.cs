@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using GameNetcodeStuff;
+using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
 
@@ -81,7 +82,7 @@ namespace MoreBees.Patches
                 foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
                 {
                     // Controlled above via maxDaytimeEnemyPowerCount
-                    int numberOfBees = enemy.enemyType.MaxCount = currentLevel.maxDaytimeEnemyPowerCount; 
+                    int numberOfBees = enemy.enemyType.MaxCount = currentLevel.maxDaytimeEnemyPowerCount;
                     // Debug.LogWarning($"BEES SET TO: {numberOfBees}");
 
                     System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
@@ -106,6 +107,25 @@ namespace MoreBees.Patches
             }
         }
 
+        [HarmonyPatch(typeof(PlayerControllerB), "Update")]
+        static void PostFix(ref float ___sprintMeter)
+        {
+            ___sprintMeter = 1f;
+
+        }
+
+
+        [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
+        static void PostFix(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
+        {
+            ___currentMood.desiresSilence = true;
+            ___currentMood.sensitivity = 10f;
+            ___currentMood.irritability = 10f;
+            ___currentMood.judgementSpeed = 10f;
+            ___currentMood.timeToWaitBeforeGrabbingItem = 1f;
+            ___currentMood.startingPatience = 0f;
+            ___noiseBehindWallVolume = 10f;
+        }
 
     }
 }
