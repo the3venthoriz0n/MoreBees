@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MoreBees.Patches
 {
+    [HarmonyPatch]
     public class MoreBees
     {
         private static FieldInfo currentLevelField;

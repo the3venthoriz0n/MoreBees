@@ -3,14 +3,16 @@ using HarmonyLib;
 
 namespace MoreBees.Patches
 {
-    [HarmonyPatch(typeof(PlayerControllerB), "Update")]
+    [HarmonyPatch]
     public class MoreSprint
     {
-        
-        static void PostFix(ref float ___sprintMeter)
+        [HarmonyPatch(typeof(PlayerControllerB), "Update")]
+        [HarmonyPostfix]
+        static void MoreSprintPatch(ref float ___sprintMeter)
         {
             ___sprintMeter = 1f;
 
         }
     }
 }
+

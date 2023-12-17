@@ -2,11 +2,13 @@
 
 namespace MoreBees.Patches
 {
+    [HarmonyPatch]
     public class MoreTentacles
     {
 
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
-        static void PostFix(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
+        [HarmonyPostfix]
+        static void MoreTentaclesPatch(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
         {
             ___currentMood.desiresSilence = true;
             ___currentMood.sensitivity = 10f;
