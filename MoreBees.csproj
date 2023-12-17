@@ -59,11 +59,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patches\moreBatts.cs" />
-    <Compile Include="Patches\moreBees.cs" />
-    <Compile Include="Patches\moreSprint.cs" />
-    <Compile Include="Patches\moreTentacles.cs" />
-    <Compile Include="MoreBeesBase.cs" />
+    <Compile Include="Patches\MoreBees.cs" />
+    <Compile Include="Patches\MoreSprint.cs" />
+    <Compile Include="Patches\MoreTentacles.cs" />
+    <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

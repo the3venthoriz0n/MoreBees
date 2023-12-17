@@ -4,21 +4,20 @@ using UnityEngine;
 
 namespace MoreBees.Patches
 {
-    [HarmonyPatch]
-    class moreBees
+    public class MoreBees
     {
         private static FieldInfo currentLevelField;
 
-        static moreBees()
+        static MoreBees()
         {
             // Initialize currentLevelField in the static constructor
             currentLevelField = AccessTools.Field(typeof(RoundManager), "currentLevel");
-
         }
+
 
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         [HarmonyPrefix]
-        static void chooseDaytimeEnemies(RoundManager __instance)
+        static void ChooseDaytimeEnemies(RoundManager __instance)
         {
 
             if (currentLevelField != null)
@@ -28,7 +27,7 @@ namespace MoreBees.Patches
                 if (currentLevel != null)
                 {
                     currentLevel.maxDaytimeEnemyPowerCount = 70; // this controls the number of enemies (bees)
-                                                                  // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
+                    // currentLevel.daytimeEnemySpawnChanceThroughDay = 100;
 
                     var daytimeEnemies = currentLevel.DaytimeEnemies;
                     Debug.LogWarning($"--------------------Number of DaytimeEnemies: {daytimeEnemies.Count}");
@@ -69,7 +68,7 @@ namespace MoreBees.Patches
         // Spawn more daytime enemies
         [HarmonyPatch(typeof(RoundManager), "SpawnDaytimeEnemiesOutside")]
         [HarmonyPostfix]
-        static void moreDaytimeEnemies(RoundManager __instance)
+        static void MoreDaytimeEnemies(RoundManager __instance)
         {
             float num = 100; // timeScript.lengthOfHours * (float)currentHour;
             GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("OutsideAINode");
@@ -81,8 +80,8 @@ namespace MoreBees.Patches
                 // Iterate over each EnemyType in the list
                 foreach (SpawnableEnemyWithRarity enemy in __instance.currentLevel.DaytimeEnemies)
                 {
-                    // Access MaxCount directly on the current EnemyType instance
-                    int numberOfBees = enemy.enemyType.MaxCount = currentLevel.maxDaytimeEnemyPowerCount; // controlled above ^^
+                    // Controlled above via maxDaytimeEnemyPowerCount
+                    int numberOfBees = enemy.enemyType.MaxCount = currentLevel.maxDaytimeEnemyPowerCount; 
                     // Debug.LogWarning($"BEES SET TO: {numberOfBees}");
 
                     System.Reflection.MethodInfo spawnRandomDaytimeEnemyMethod = AccessTools.Method(typeof(RoundManager), "SpawnRandomDaytimeEnemy", new System.Type[] { typeof(GameObject[]), typeof(float) });
@@ -106,23 +105,6 @@ namespace MoreBees.Patches
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
