@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MoreBees.Patches
 {
     [HarmonyPatch]
-    class moreTentacles : moreBees
+    class moreTentacles
     {
 
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]

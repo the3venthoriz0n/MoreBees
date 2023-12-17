@@ -17,7 +17,7 @@ namespace MoreBees
     {
         private const string modGUID = "the3venthoriz0n.MoreBees";
         private const string modName = "More Bees";
-        private const string modVersion = "1.0.0";
+        private const string modVersion = "1.0.1";
 
         private readonly Harmony harmony = new Harmony(modGUID);
         public static ManualLogSource Log = new ManualLogSource(modName);

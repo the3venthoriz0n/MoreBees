@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MoreBees.Patches
 {
     [HarmonyPatch]
-    class moreBatts : moreBees
+    class moreBatts
     {
 
         [HarmonyPatch(typeof(GrabbableObject), "Update")]
