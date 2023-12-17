@@ -1,8 +1,9 @@
 # More Bees
-This is a mod for Lethal Company. It's exactly like it sounds; There are a crap ton of bees (and some other stuff).
+This is a mod for Lethal Company. It's exactly like it sounds; way way more bees (and some other stuff).
 
 Please note, I have absolutely no clue how to mod games and this is currently a little broken. Fixes on the way.
 
+Don't hesitate to report any "bugs" (pun intended).
 
 ## Features
 - Bees

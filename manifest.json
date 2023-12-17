@@ -1,8 +1,8 @@
 {
     "name": "MoreBees",
-    "version_number": "1.0.0",
+    "version_number": "1.0.1",
     "website_url": "https://github.com/the3venthoriz0n/MoreBees",
-    "description": "There are so many bees!",
+    "description": "It's un-bee-lievably fun!",
     "dependencies": [
         "BepInEx-BepInExPack-5.4.2100"
     ]
