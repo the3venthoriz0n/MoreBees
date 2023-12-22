@@ -3,7 +3,7 @@ This is a mod for Lethal Company. It's exactly like it sounds; way way more bees
 
 Please note, I have absolutely no clue how to mod games and this is currently a little broken. Fixes on the way.
 
-Don't hesitate to report any "bugs" (pun intended).
+Don't hesitate to report any "bugs" (pun intended) and if you really love it, [buy me a coffee!](https://www.buymeacoffee.com/the3venthoriz0n)
 
 ## Features
 - Bees
