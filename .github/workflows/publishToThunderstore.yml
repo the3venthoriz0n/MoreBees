@@ -1,0 +1,27 @@
+name: Publish To Thunderstore
+
+on: 
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+        # Use checkout to publish the files in your repo
+      - uses: actions/checkout@v4 
+      - uses: GreenTF/upload-thunderstore-package@v4.2
+        with:
+          # The thunderstore 'team' to publish under
+          namespace: the3venthoriz0n
+          description: It's un-bee-lievably fun!
+          token: ${{ secrets.API_TOKEN }}
+          name: MoreBees
+          # Use the tag as the package version
+          version: ${{ github.ref_name }}
+          community: Lethal Company
+          repo: thunderstore.io
+          categories: |
+            Mods
+            BepInEx
+
