@@ -11,7 +11,7 @@ Don't hesitate to report any "bugs" (pun intended) and if you really love it, [b
 - A secret surprise
 
 ## Future Plans
-- I plan to add unlimited sprint only while holding a hive
+- Unlimited sprint only while holding a hive
 - More bees can never hurt
 
 ## Instructions
