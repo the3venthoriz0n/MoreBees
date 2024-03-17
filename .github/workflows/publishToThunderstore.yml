@@ -1,18 +1,16 @@
 name: Publish To Thunderstore
 
-# on:
-#   release:
-#     types: [published]
-
-on: push
+on:
+  release:
+    types: [published]
 
 jobs:
-  publish:
+  publish-to-thunderstore:
     runs-on: ubuntu-latest
     steps:
       # Use checkout to publish the files in your repo
-      - uses: actions/checkout@v4
-      - uses: GreenTF/upload-thunderstore-package@v4.3
+      - uses: actions/checkout@main
+      - uses: GreenTF/upload-thunderstore-package@main
         with:
           # The thunderstore 'team' to publish under
           namespace: the3venthoriz0n
