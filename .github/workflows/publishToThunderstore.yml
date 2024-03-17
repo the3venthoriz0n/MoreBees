@@ -10,7 +10,7 @@ jobs:
     steps:
         # Use checkout to publish the files in your repo
       - uses: actions/checkout@v4 
-      - uses: GreenTF/upload-thunderstore-package@v4.2
+      - uses: GreenTF/upload-thunderstore-package@v4.3
         with:
           # The thunderstore 'team' to publish under
           namespace: the3venthoriz0n
