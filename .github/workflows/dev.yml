@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     name: Build
-    id: build
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Sources

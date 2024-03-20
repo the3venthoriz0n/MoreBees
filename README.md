@@ -11,7 +11,7 @@ Don't hesitate to report any "bugs" (pun intended) and if you really love it, [b
 - A secret surprise
 
 
-## Installation (r2modman or Thunderstore Mod Manager are recommended)
+## Installation
 
 
 ### r2modman or Thunderstore Mod Manager
