@@ -37,6 +37,6 @@ repository = "https://thunderstore.io"
 communities = ["lethal-company"]
 
 [publish.categories]
-riskofrain2 = ["BepInEx", "Mods"]
+lethal-company = ["bepinex", "mods"]
 
 
