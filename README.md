@@ -28,7 +28,7 @@ Don't hesitate to report any "bugs" (pun intended) and if you really love it, [b
 5. Find your BepinEx installation's plugin folder, by default it would be in steamapps: `steamapps\common\Lethal Company\BepInEx\plugins`
 6. Create a folder titled `the3venthoriz0n-MoreBees`
 7. Paste the contents into that folder
-8. Launch the game via steam
+
 
 
 ## Future Plans

@@ -18,27 +18,28 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
           fetch-depth: 0
           filter: tree:0
+        continue-on-error: true
 
       - name: Setup .NET environment
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.0.100"
 
-      # - name: Restore solution
-      #   run: |
-      #     dotnet restore
-
       - name: Install Thunderstore CLI
         run: |
           dotnet tool install -g tcli
+          
+      # - name: Restore solution
+      #   run: |
+      #     dotnet restore
 
       # - name: Build solution
       #   run: |
       #     dotnet build
           
-      - name: Install Thunderstore CLI
+      - name: Build Mod Via TCLI
         run: |
-          tcli build --config-path .\assets\thunderstore.toml
+          tcli build --config-path ./assets/thunderstore.toml > tcli_output.txt
 
 
       - name: Upload Artifacts
@@ -60,6 +61,7 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
+        continue-on-error: true
         
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -77,6 +79,7 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
+        continue-on-error: true
         
       - name: Download Thunderstore artifact
         uses: actions/download-artifact@v4
