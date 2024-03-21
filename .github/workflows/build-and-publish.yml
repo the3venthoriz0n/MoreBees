@@ -3,6 +3,7 @@ name: Build and Publish
 on:
   release:
     types: [prereleased, released]
+  push:
     
 jobs:
   build:
