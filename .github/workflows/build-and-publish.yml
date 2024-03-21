@@ -20,7 +20,7 @@ jobs:
       - name: Setup .NET environment
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "8.0.100"
+          dotnet-version: '8'
 
       - name: Install Thunderstore CLI
         run: |
@@ -55,8 +55,6 @@ jobs:
         uses: actions/download-artifact@v4
       
       - name: Upload artifacts to Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || github.token }}
         run: gh release upload ${{ github.event.release.tag_name }} thunderstore-build/*.zip
       
   
@@ -80,7 +78,7 @@ jobs:
       - name: Setup .NET environment
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "8.0.100"
+          dotnet-version: '8'
 
       - name: Install Thunderstore CLI
         run: |
