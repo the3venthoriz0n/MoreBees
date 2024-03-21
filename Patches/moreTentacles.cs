@@ -8,7 +8,7 @@ namespace MoreBees.Patches
 
         [HarmonyPatch(typeof(DepositItemsDesk), "SetCompanyMood")]
         [HarmonyPostfix]
-        static void MoreTentaclesPatch(CompanyMood mood, ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
+        static void MoreTentaclesPatch(ref CompanyMood ___currentMood, ref float ___noiseBehindWallVolume)
         {
             ___currentMood.desiresSilence = true;
             ___currentMood.sensitivity = 10f;

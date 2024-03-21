@@ -10,7 +10,7 @@ namespace MoreBees
     public static class PluginInfo
     {
         public const string modName = "MoreBees";
-        public const string modVersion = "1.0.2";
+        public const string modVersion = "1.2.0";
         public const string modGUID = "the3venthoriz0n.MoreBees";
     }
 
