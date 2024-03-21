@@ -1,0 +1,54 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+    
+jobs:
+  
+  publish-to-thunderstore:
+    name: Publish to GitHub and Thunderstore
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+
+      - name: Setup .NET environment
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Thunderstore CLI
+        run: |
+          dotnet tool install -g tcli
+
+      - name: Validate artifact exists
+        run: test -d ./dist
+
+      - name: Run script to extract changelog entry
+        id: extract-changelog
+        run: |
+          # Read the contents of the changelog.md file
+          changelog_content=$(<CHANGELOG.md)
+
+          # Extract the changelog entry corresponding to the release tag
+          changelog_entry=$(echo "$changelog_content" | sed -n "/## \[${{ github.ref }}\]/,/^## /p" | sed '$d')
+
+          # Store the changelog entry in an output variable
+          echo "::set-output name=changelog::${changelog_entry}"
+
+      - name: Create or update release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: ${{ steps.extract-changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      - name: Publish to Thunderstore
+        env:
+          TCLI_AUTH_TOKEN: ${{ secrets.THUNDERSTORE_API_TOKEN }}
+        run: |
+          tcli publish --config-path ./assets/thunderstore.toml --file ./dist/*.zip 
