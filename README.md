@@ -32,7 +32,6 @@ Don't hesitate to report any "bugs" (pun intended) and if you really love it, [b
 
 
 ## Future Plans
-- Unlimited sprint only while holding a hive
 - More bees can never hurt
 
 
